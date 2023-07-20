@@ -98,7 +98,6 @@ let
       ++ lib.optionals jitSupport [ "--with-llvm" ];
 
     patches = [
-      ./patches/disable-resolve_symlinks.patch
       ./patches/less-is-more.patch
       ./patches/hardcode-pgxs-path.patch
       ./patches/specify_pkglibdir_at_runtime.patch
@@ -123,6 +122,7 @@ let
 
     ] ++ lib.optionals stdenv'.isLinux [
       (if atLeast "13" then ./patches/socketdir-in-run-13.patch else ./patches/socketdir-in-run.patch)
+      (if atLeast "16" then ./patches/disable-normalize_exec_path.patch else ./patches/disable-resolve_symlinks.patch)
     ];
 
     installTargets = [ "install-world" ];
@@ -351,6 +351,16 @@ let
       thisAttr = "postgresql_15";
       inherit self;
     };
+
+    postgresql_16 = self.callPackage generic {
+      version = "16beta2";
+      psqlSchema = "16";
+      hash = "sha256-umUxl0ZRgMk3dbSUmoncb7/rripEWHrnFo/f0k9Rm1A=";
+      this = self.postgresql_16;
+      thisAttr = "postgresql_16";
+      inherit self;
+    };
+
   };
 
 in self:
